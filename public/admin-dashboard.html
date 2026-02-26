@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Tableau de bord Administrateur - IAM</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="logo UUA.jpg" alt="Logo de l'Université" class="logo-img">
+        </div>
+        <h1> Tableau de bord Administrateur</h1>
+    </div>
+
+    <div class="dashboard">
+        <div class="dashboard-container">
+            <!-- MENU LATERAL -->
+            <div class="menu">
+                <ul>
+                    <li><button onclick="showSection('createUser')" class="active">👨‍💼 Créer Utilisateur</button></li>
+                    <li><button onclick="showSection('enterprises')">🏢 Entreprises</button></li>
+                    <li><button onclick="showSection('statistics')">📊 Statistiques</button></li>
+                    <li><button onclick="showSection('report')">📚 Rapport</button></li>
+                    <li><button onclick="showSection('messaging')">✉️ Messagerie <span id="messageCount"
+                                class="badge-new" style="display:none;">0</span></button></li>
+                    <li><button onclick="showSection('students')">🎓 Étudiants</button></li>
+                    <li><button onclick="showSection('soutenances')">🎤 Soutenances</button></li>
+                    <li><button onclick="logout()">🚪 Déconnexion</button></li>
+                </ul>
+            </div>
+
+            <!-- CONTENU -->
+            <div class="content">
+                <!-- SECTION : CRÉER UTILISATEUR -->
+                <div id="createUser" class="section active">
+                    <h2>Créer Utilisateur</h2>
+                    <form id="createUserForm">
+                        <label for="userRole">Profil :</label>
+                        <select id="userRole" required>
+                            <option value="student">Étudiant</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+
+                        <label for="name">Nom :</label>
+                        <input type="text" id="name" placeholder="Nom" required>
+
+                        <label for="surname">Prénom :</label>
+                        <input type="text" id="surname" placeholder="Prénom" required>
+
+                        <label for="email">Email :</label>
+                        <input type="email" id="email" placeholder="exemple@email.com" required>
+
+                        <label for="password">Mot de passe :</label>
+                        <input type="password" id="password" placeholder="Mot de passe sécurisé" required>
+
+                        <button type="submit">✅ Créer Utilisateur</button>
+                    </form>
+                </div>
+
+                <!-- SECTION : ENTREPRISES -->
+                <div id="enterprises" class="section">
+                    <h2>Gestion des Entreprises</h2>
+
+                    <button onclick="showAddEnterpriseForm()" class="add-student-btn">
+                        ➕ Ajouter une entreprise
+                    </button>
+
+
+
+                    <input type="text" id="enterpriseSearch" placeholder="🔍 Rechercher une entreprise..."
+                        onkeyup="searchEnterprise()" class="search-input" />
+
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <h3>Total Entreprises</h3>
+                            <div class="number" id="totalEnterprises">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Étudiants placés</h3>
+                            <div class="number" id="totalPlaced">0</div>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Entreprise</th>
+                                <th>Étudiants</th>
+                                <th>Secteur</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enterprisesList">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SECTION : STATISTIQUES -->
+                <div id="statistics" class="section">
+                    <h2>Statistiques des stages par entreprise</h2>
+
+                    <input type="text" id="statsSearch" placeholder="🔍 Rechercher une entreprise..."
+                        onkeyup="searchStatistics()" class="search-input" />
+
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Entreprise</th>
+                                <th>Étudiants en stage</th>
+                                <th>Stages terminés</th>
+                                <th>Stages en cours</th>
+                            </tr>
+                        </thead>
+                        <tbody id="statisticsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SECTION : RAPPORTS -->
+                <div id="report" class="section">
+                    <h2>Rapports de stage</h2>
+
+                    <div class="report-submenu">
+                        <button onclick="showReportTab('rendered')" class="submenu-btn active">✅ Rapports
+                            rendus</button>
+                        <button onclick="showReportTab('pending')" class="submenu-btn">⏳ Rapports en
+                            attente</button>
+                    </div>
+
+                    <div class="report-content">
+                        <div id="rendered" class="report-tab active">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Étudiant</th>
+                                        <th>Entreprise</th>
+                                        <th>Date de soumission</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="renderedReportsBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="pending" class="report-tab">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Étudiant</th>
+                                        <th>Entreprise</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingReportsBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION : MESSAGERIE -->
+                <div id="messaging" class="section">
+                    <h2>Messagerie</h2>
+
+                    <div class="messaging-submenu">
+                        <button onclick="showMessagingTab('inbox')" class="submenu-btn active">📥 Boîte de
+                            réception</button>
+                        <button onclick="showMessagingTab('compose')" class="submenu-btn">✏️ Nouveau
+                            message</button>
+                    </div>
+
+                    <div class="messaging-content">
+                        <div id="inbox" class="messaging-tab active">
+                            <h3>Boîte de réception</h3>
+                            <div id="inboxList">
+                            </div>
+                        </div>
+
+                        <div id="compose" class="messaging-tab">
+                            <h3>Nouveau message</h3>
+                            <form id="composeMessageForm">
+                                <label for="messageTo">Destinataire :</label>
+                                <select id="messageTo" required>
+                                    <option value="">-- Sélectionner --</option>
+                                    <option value="all">Tous les étudiants</option>
+                                </select>
+                                <label for="messageSubject">Objet :</label>
+                                <input type="text" id="messageSubject" required>
+                                <label for="messageContent">Message :</label>
+                                <textarea id="messageContent" rows="6" required></textarea>
+                                <button type="submit">📧 Envoyer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION : ÉTUDIANTS -->
+                <div id="students" class="section">
+                    <h2>Gestion des Étudiants</h2>
+
+                    <button onclick="showAddStudentForm()" class="add-student-btn">
+                        ➕ Ajouter un étudiant
+                    </button>
+
+                    <input type="text" id="studentSearch"
+                        placeholder="🔍 Rechercher un étudiant (nom, prénom, filière, niveau...)"
+                        onkeyup="searchStudent()" class="search-input">
+
+                    <div id="addStudentFormContainer"
+                        style="display: none; background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <h3>Ajouter un étudiant</h3>
+                        <form id="addStudentForm">
+                            <label for="studentName">Nom :</label>
+                            <input type="text" id="studentName" required>
+                            <label for="studentSurname">Prénom(s) :</label>
+                            <input type="text" id="studentSurname" required>
+                            <label for="studentEmail">Email :</label>
+                            <input type="email" id="studentEmail" required>
+                            <label for="studentPassword">Mot de passe :</label>
+                            <input type="password" id="studentPassword" required>
+                            <label for="studentFiliere">Filière :</label>
+                            <input type="text" id="studentFiliere" required>
+                            <label for="studentNiveau">Niveau :</label>
+                            <select id="studentNiveau" required>
+                                <option value="">-- Sélectionner --</option>
+                                <option value="Licence 1">Licence 1</option>
+                                <option value="BTS 1">BTS 1</option>
+                                <option value="Licence 2">Licence 2</option>
+                                <option value="BTS 2">BTS 2</option>
+                                <option value="Licence 3">Licence 3</option>
+                                <option value="Master 1">Master 1</option>
+                                <option value="Master 2">Master 2</option>
+                            </select>
+                            <button type="submit">Ajouter</button>
+                           <button type="button" onclick="hideAddStudentForm()" class="cancel-btn">Annuler</button>
+                        </form>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Filière</th>
+                                <th>Niveau</th>
+                                <th>Entreprise</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SECTION : SOUTENANCES -->
+                <div id="soutenances" class="section">
+                    <h2>Gestion des soutenances</h2>
+
+                    <div class="soutenances-submenu">
+                        <button onclick="showSoutenanceTab('programmation')" class="submenu-btn active">💬
+                            Programmer</button>
+                        <button onclick="showSoutenanceTab('listSoutenances')" class="submenu-btn">📅 Calendrier des
+                            soutenances</button>
+                    </div>
+
+                    <div class="soutenances-content">
+                        <div id="programmation" class="soutenance-tab active">
+                            <h3>Programmer une soutenance</h3>
+                            <form id="addSoutenanceForm">
+                                <label for="soutenanceStudent">Étudiant :</label>
+                                <select id="soutenanceStudent" required>
+                                    <option value="">Sélectionner</option>
+                                </select>
+                                <label for="soutenanceDate">Date :</label>
+                                <input type="date" id="soutenanceDate" required>
+                                <label for="soutenanceTime">Heure :</label>
+                                <input type="time" id="soutenanceTime" required>
+                                <label for="soutenanceSalle">Salle :</label>
+                                <select id="soutenanceSalle" required>
+                                    <option value="Salle Thomas SANKARA">Salle Thomas SANKARA</option>
+                                    <option value="Salle Maurice YAMEOGO">Salle Maurice YAMEOGO</option>
+                                    <option value="Salle Hamadou HAMPATHE BA">Salle Hamadou HAMPATHE BA</option>
+                                    <option value="Salle SYLLA Ibrahima">Salle SYLLA Ibrahima</option>
+                                    <option value="Salle Soundjaita KEITA">Salle Soundjaita KEITA</option>
+                                    <option value="Salle Nelson MANDELA">Salle Nelson MANDELA</option>
+                                </select>
+
+                                <div id="juryMembersContainer">
+                                    <div class="jury-member">
+                                        <label>Titre du membre 1 :</label>
+                                        <select class="jury-title" required>
+                                            <option value="">-- Sélectionner --</option>
+                                            <option value="Président(e) du jury">Président(e) du jury</option>
+                                            <option value="Maître de stage">Maître de stage</option>
+                                            <option value="Professeur(e) de suivi">Professeur(e) de suivi</option>
+                                            <option value="Rapporteur">Rapporteur(e)</option>
+                                        </select>
+                                        <label>Nom complet :</label>
+                                        <input type="text" class="jury-name" placeholder="Ex: Prof. ZOUNGRANA" required>
+                                    </div>
+
+                                    <div class="jury-member">
+                                        <label>Titre du membre 2 :</label>
+                                        <select class="jury-title" required>
+                                            <option value="">-- Sélectionner --</option>
+                                            <option value="Président(e) du jury">Président(e) du jury</option>
+                                            <option value="Maître de stage">Maître de stage</option>
+                                            <option value="Professeur(e) de suivi">Professeur(e) de suivi</option>
+                                            <option value="Rapporteur">Rapporteur(e)</option>
+                                        </select>
+                                        <label>Nom complet :</label>
+                                        <input type="text" class="jury-name" placeholder="Ex: Dr. KONATE" required>
+                                    </div>
+
+                                    <div class="jury-member">
+                                        <label>Titre du membre 3 :</label>
+                                        <select class="jury-title" required>
+                                            <option value="">-- Sélectionner --</option>
+                                            <option value="Président(e) du jury">Président(e) du jury</option>
+                                            <option value="Maître de stage">Maître de stage</option>
+                                            <option value="Professeur(e) de suivi">Professeur(e) de suivi</option>
+                                            <option value="Rapporteur">Rapporteur(e)</option>
+                                        </select>
+                                        <label>Nom complet :</label>
+                                        <input type="text" class="jury-name" placeholder="Ex: Dr. SAWADOGO" required>
+                                    </div>
+                                </div>
+
+                                <button type="button" onclick="addJuryMember()" id="addJuryBtn" class="secondary-action-btn" style="margin: 15px 0;">➕ Ajouter un membre</button>
+                                <button type="submit" class="submit-btn" style="width: 100%;">✅ Programmer la soutenance</button>
+                            </form>
+                        </div>
+
+                        <div id="listSoutenances" class="soutenance-tab">
+                            <div class="calendar-header">
+                                <h3>Liste des soutenances programmées</h3>
+                                <button onclick="downloadCalendarPDF()" class="download-calendar-btn">📥 Télécharger
+                                    le
+                                    calendrier PDF</button>
+                            </div>
+                            <table id="soutenancesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Étudiant</th>
+                                        <th>Date</th>
+                                        <th>Heure</th>
+                                        <th>Salle</th>
+                                        <th>Jury</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="soutenancesTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE ENTREPRISE -->
+    <div id="enterpriseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Détails de l'entreprise</h3>
+                <button class="close-modal" onclick="closeEnterpriseModal()">×</button>
+            </div>
+
+            <form id="enterpriseForm">
+                <label>Nom :</label>
+                <input type="text" id="entName" required>
+
+                <label>Secteur d'activité :</label>
+                <input type="text" id="entSector" required>
+
+                <label>Contact :</label>
+                <input type="text" id="entContact" required>
+
+                <div id="studentAssignSection" style="display: none;">
+                    <label>Assigner un étudiant :</label>
+                    <select id="assignStudent">
+                        <option value="">-- Sélectionner un étudiant --</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="saveEnterpriseBtn">💾 Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALE MESSAGE -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="messageModalTitle">Message</h3>
+                <button class="close-modal" onclick="closeMessageModal()">×</button>
+            </div>
+            <div id="messageModalContent">
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

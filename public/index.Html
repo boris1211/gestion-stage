@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Stage - Connexion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 420px;
+            background: white;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        .logo-img {
+            width: 130px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #1a8917;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .form-container h2 {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .account-type {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .account-button {
+            flex: 1;
+            padding: 12px;
+            background-color: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .account-button:hover {
+            border-color: #33aa33;
+            transform: scale(1.05);
+        }
+
+        .account-button.active {
+            background-color: #33aa33;
+            color: white;
+            border-color: #33aa33;
+            transform: scale(1.05);
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .form input {
+            width: 100%;
+            padding: 12px;
+            padding-right: 45px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .form input:focus {
+            border-color: #33aa33;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
+        }
+
+        .form button[type="submit"] {
+            padding: 12px;
+            background-color: #33aa33;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .form button[type="submit"]:hover {
+            background-color: #2f8f2f;
+        }
+
+        /* Bouton désactivé pendant le chargement */
+        .form button[type="submit"]:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to   { transform: translateY(0);     opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%,  100% { transform: translateX(0);   }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80%      { transform: translateX(10px);  }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: bold;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-error   { background: #f44336; color: white; }
+        .alert-success { background: #4CAF50; color: white; }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="logo UUA.jpg" alt="Logo de l'Université" class="logo-img">
+        </div>
+        <h1>Bienvenue</h1>
+        <div class="form-container">
+            <h2>Connectez-vous</h2>
+
+            <!-- Boutons de sélection du type de compte -->
+            <div class="account-type">
+                <button id="student-btn" class="account-button">
+                    👨‍🎓 Compte Étudiant
+                </button>
+                <button id="admin-btn" class="account-button">
+                    👨‍💼 Compte Administrateur
+                </button>
+            </div>
+
+            <!-- Formulaire de connexion -->
+            <form id="login-form" class="form" style="display:none;">
+                <div class="input-group">
+                    <!-- On utilise l'EMAIL comme identifiant (cohérent avec ta BD) -->
+                    <input type="email" id="email" placeholder="Adresse email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Mot de passe" required>
+                    <span class="eye-icon" id="toggle-password">👁️</span>
+                </div>
+                <button type="submit" id="submit-btn">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // EXPLICATION DE CE QUI A CHANGÉ PAR RAPPORT À L'ANCIEN CODE :
+        //
+        // AVANT : le code vérifiait les credentials dans une liste JS
+        //         statique codée en dur → les nouveaux utilisateurs
+        //         créés par l'admin n'existaient pas dans cette liste.
+        //
+        // MAINTENANT : quand l'utilisateur clique "Se connecter",
+        //         on envoie email + password + role au serveur Express
+        //         via fetch('/api/auth/login'). Le serveur cherche
+        //         dans SQLite et répond OK ou ERREUR.
+        //         → Tous les utilisateurs créés par l'admin sont en BD
+        //         → Le login les trouvera automatiquement.
+        // ============================================================
+
+        let selectedAccountType = null;
+
+        const studentBtn   = document.getElementById('student-btn');
+        const adminBtn     = document.getElementById('admin-btn');
+        const loginForm    = document.getElementById('login-form');
+        const emailInput   = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('toggle-password');
+        const submitBtn    = document.getElementById('submit-btn');
+
+        // ── Afficher / masquer le mot de passe ────────────────────
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // ── Sélection du type de compte ───────────────────────────
+        studentBtn.addEventListener('click', () => selectAccountType('student'));
+        adminBtn.addEventListener('click',   () => selectAccountType('admin'));
+
+        function selectAccountType(type) {
+            selectedAccountType = type;
+            if (type === 'student') {
+                studentBtn.classList.add('active');
+                adminBtn.classList.remove('active');
+            } else {
+                adminBtn.classList.add('active');
+                studentBtn.classList.remove('active');
+            }
+            loginForm.style.display    = 'flex';
+            loginForm.style.animation  = 'fadeIn 0.3s ease-in';
+            emailInput.focus();
+        }
+
+        // ── Soumission du formulaire ──────────────────────────────
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Vérifications côté client
+            if (!selectedAccountType) {
+                showError('Veuillez d\'abord sélectionner un type de compte.');
+                return;
+            }
+
+            const email    = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                showError('Veuillez remplir tous les champs.');
+                return;
+            }
+
+            // Désactiver le bouton pendant la requête (évite double-clic)
+            submitBtn.disabled    = true;
+            submitBtn.textContent = 'Connexion...';
+
+            try {
+                // ─────────────────────────────────────────────────────
+                // APPEL AU SERVEUR EXPRESS
+                // On envoie les credentials en JSON à /api/auth/login.
+                // Le serveur vérifie dans SQLite et répond en JSON.
+                // ─────────────────────────────────────────────────────
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email:    email,
+                        password: password,
+                        role:     selectedAccountType   // 'admin' ou 'student'
+                    })
+                });
+
+                // Parser la réponse JSON du serveur
+                const result = await response.json();
+
+                if (result.success) {
+                    // ✅ Connexion réussie
+
+                    // Sauvegarder les infos de l'utilisateur connecté
+                    // pour les réutiliser dans les dashboards
+                    localStorage.setItem('currentUser', JSON.stringify(result.user));
+
+                    showSuccess(`✅ ${result.message}`);
+
+                    // Rediriger selon le rôle après 1 seconde
+                    setTimeout(() => {
+                        if (result.user.role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'etudiant-dashboard.html';
+                        }
+                    }, 1000);
+
+                } else {
+                    // ❌ Erreur renvoyée par le serveur (mauvais mdp, etc.)
+                    showError(result.message);
+                    shakeForm();
+                    submitBtn.disabled    = false;
+                    submitBtn.textContent = 'Se connecter';
+                }
+
+            } catch (error) {
+                // ❌ Erreur réseau (serveur éteint, etc.)
+                console.error('Erreur réseau:', error);
+                showError('Impossible de contacter le serveur. Vérifiez que Node.js est démarré.');
+                submitBtn.disabled    = false;
+                submitBtn.textContent = 'Se connecter';
+            }
+        });
+
+        // ── Fonctions utilitaires ─────────────────────────────────
+        function showError(message) {
+            removeAlert();
+            const div = document.createElement('div');
+            div.className   = 'alert alert-error';
+            div.textContent = message;
+            loginForm.parentElement.insertBefore(div, loginForm);
+            setTimeout(() => {
+                div.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => div.remove(), 300);
+            }, 4000);
+        }
+
+        function showSuccess(message) {
+            removeAlert();
+            const div = document.createElement('div');
+            div.className   = 'alert alert-success';
+            div.textContent = message;
+            loginForm.parentElement.insertBefore(div, loginForm);
+        }
+
+        function removeAlert() {
+            const old = document.querySelector('.alert');
+            if (old) old.remove();
+        }
+
+        function shakeForm() {
+            loginForm.style.animation = 'shake 0.5s';
+            setTimeout(() => { loginForm.style.animation = ''; }, 500);
+        }
+    </script>
+</body>
+
+</html>

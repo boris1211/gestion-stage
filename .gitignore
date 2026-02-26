@@ -1,0 +1,6 @@
+node_modules/
+.env
+database/iam_stages.db
+uploads/
+Backend_stage/node_modules/
+Backend_stage/.env

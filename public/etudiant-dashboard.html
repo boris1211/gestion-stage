@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Tableau de bord Étudiant - IAM</title>
+    <link rel="stylesheet" href="dashboard1.css">
+    <style>
+        .stage-step {
+            animation: fadeIn 0.4s ease;
+        }
+
+        .report-step {
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cancel-btn {
+            padding: 12px 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn:hover {
+            border-color: #999;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <img src="logo UUA.jpg" alt="Logo Université" class="logo-img">
+        </div>
+        <h1>Tableau de bord Étudiant</h1>
+    </div>
+
+    <div class="dashboard">
+        <div class="dashboard-container">
+            <!-- MENU LATERAL -->
+            <div class="menu">
+                <ul>
+                    <li><button onclick="showSection('demanderStage')" class="active">📋 Demander un Stage</button></li>
+                    <li><button onclick="showSection('theme')">📚 Rapport</button></li>
+                    <li><button onclick="showSection('messaging')">✉️ Messagerie</button></li>
+                    <li><button onclick="showSection('soutenances')">🎤 Soutenances</button></li>
+                    <li><button onclick="logout()">🚪 Déconnexion</button></li>
+                </ul>
+            </div>
+
+            <!-- CONTENU -->
+            <div class="content">
+                <!-- SECTION DEMANDER UN STAGE -->
+                <div id="demanderStage" class="section active">
+                    <h2>Demander un Stage</h2>
+
+                    <!-- Étape 1: Choix de l'entreprise -->
+                    <div id="step1" class="stage-step">
+                        <h3>🏢 Étape 1 : Choisissez votre entreprise</h3>
+                        <form id="entrepriseForm">
+                            <label for="entreprise">Entreprise :</label>
+                            <select id="entreprise" required>
+                                <option value="">-- Sélectionnez une entreprise --</option>
+                                <option value="CORIS BANK">CORIS BANK INTERNATIONAL</option>
+                                <option value="ORANGE">ORANGE BURKINA</option>
+                                <option value="WENDKUNI">WENDKUNI BANK</option>
+                                <option value="BF1">BF1</option>
+                                <option value="SONABHY">SONABHY</option>
+                                <option value="LA POSTE">LA POSTE</option>
+                                <option value="SODIGAZ">SODIGAZ</option>
+                                <option value="RAHIMO">RAHIMO</option>
+                                <option value="ONEA">ONEA</option>
+                                <option value="SONABEL">SONABEL</option>
+                                <option value="MOOV">MOOV BURKINA</option>
+                                <option value="TELECEL">TELECEL FASO</option>
+                            </select>
+
+                            <label for="motivationEntreprise">Motivation (optionnel) :</label>
+                            <textarea id="motivationEntreprise" rows="4"
+                                placeholder="Expliquez pourquoi vous souhaitez faire votre stage dans cette entreprise..."></textarea>
+
+                            <button type="submit" class="submit-btn">➡️ Continuer vers l'étape suivante</button>
+                        </form>
+
+                        <div class="info-card" style="margin-top: 20px;">
+                            <h3>📋 Entreprise sélectionnée</h3>
+                            <p><strong>Entreprise :</strong> <span id="nomEntreprise" class="text-muted">Aucune</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2: Période du stage -->
+                    <div id="step2" class="stage-step" style="display: none;">
+                        <h3>📅 Étape 2 : Définissez la période du stage</h3>
+
+                        <div class="info-card" style="margin-bottom: 20px;">
+                            <p><strong>🏢 Entreprise choisie :</strong> <span id="entrepriseChoisie"></span></p>
+                        </div>
+
+                        <form id="calendrierForm">
+                            <label for="dateDebut">Date de début :</label>
+                            <input type="date" id="dateDebut" required>
+
+                            <label for="dateFin">Date de fin :</label>
+                            <input type="date" id="dateFin" required>
+
+                            <label for="objectifsStage">Objectifs du stage (optionnel) :</label>
+                            <textarea id="objectifsStage" rows="4"
+                                placeholder="Décrivez vos objectifs pour ce stage..."></textarea>
+
+                            <div class="stats-container" style="margin: 20px 0;">
+                                <div class="stat-card">
+                                    <h3>📅 Date de début</h3>
+                                    <p class="stat-value" id="affichageDebut">-</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h3>📅 Date de fin</h3>
+                                    <p class="stat-value" id="affichageFin">-</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h3>⏱️ Durée totale</h3>
+                                    <p class="stat-value" id="dureeStage">-</p>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="retourStep1()" class="cancel-btn"
+                                style="margin-right: 10px;">⬅️ Retour</button>
+                            <button type="submit" class="submit-btn">📤 Soumettre la demande complète</button>
+                        </form>
+
+                        <div class="info-card" style="margin-top: 20px;">
+                            <h3>📋 Statut de votre demande</h3>
+                            <p><strong>Statut :</strong> <span id="statutDemande" class="status-badge status-pending">En
+                                    attente de soumission</span></p>
+                            <p id="dateDemande" class="text-small"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION THEME ET RAPPORT -->
+                <div id="theme" class="section">
+                    <h2>Thème & Rapport de stage</h2>
+
+                    <!-- Étape 1: Soumettre le thème -->
+                    <div id="themeStep1" class="report-step">
+                        <h3>📝 Étape 1 : Définir le thème et la description</h3>
+
+                        <form id="themeForm">
+                            <label for="themeText">Thème du rapport :</label>
+                            <textarea id="themeText" rows="5" required
+                                placeholder="Entrez le thème de votre rapport de stage..."></textarea>
+
+                            <label for="descriptionRapport">Description détaillée :</label>
+                            <textarea id="descriptionRapport" rows="6" required
+                                placeholder="Décrivez le contenu de votre rapport, les problématiques abordées..."></textarea>
+
+                            <button type="submit" class="submit-btn">📤 Soumettre le thème à l'administrateur</button>
+                        </form>
+
+                        <div class="info-card" style="margin-top: 20px;">
+                            <h3>📋 Thème enregistré</h3>
+                            <div class="theme-display">
+                                <p id="affichageTheme" class="text-muted">Aucun thème soumis</p>
+                            </div>
+                            <p id="statutTheme" class="text-small"></p>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2: Upload du fichier -->
+                    <div id="themeStep2" class="report-step" style="display: none;">
+                        <h3>📎 Étape 2 : Joindre votre rapport de stage</h3>
+
+                        <div class="info-card" style="margin-bottom: 20px; background: #e8f5e9;">
+                            <p style="color: #2e7d32;"><strong>✅ Thème approuvé par l'administrateur</strong></p>
+                            <p style="margin-top: 10px;"><strong>Thème :</strong> <span id="themeApprouve"></span></p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>📎 Document à joindre (PDF, DOCX, TXT)</label>
+                            <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                                <p>📄 Cliquez ici pour ajouter votre rapport</p>
+                                <small>Formats acceptés : PDF, Word, Texte</small>
+                            </div>
+                            <input type="file" id="fileInput" style="display:none;" accept=".pdf,.docx,.doc,.txt">
+                        </div>
+
+                        <div id="fileList" class="file-list"></div>
+
+                        <button onclick="submitFinalReport()" class="submit-btn-large" id="submitFinalReportBtn"
+                            disabled>📤 Envoyer le rapport à l'administrateur</button>
+                        <p class="help-text">⚠️ Assurez-vous que toutes les informations sont correctes avant la
+                            soumission</p>
+                    </div>
+                </div>
+
+                <!-- SECTION MESSAGERIE -->
+                <div id="messaging" class="section">
+                    <h2>Messagerie</h2>
+
+                    <div class="messaging-layout">
+                        <div class="messaging-sidebar">
+                            <button onclick="showMessagingTab('inbox')" class="messaging-nav-btn active"
+                                data-tab="inbox">
+                                📥 Boîte de réception
+                                <span class="badge" id="inboxCount">0</span>
+                            </button>
+                            <button onclick="showMessagingTab('sent')" class="messaging-nav-btn" data-tab="sent">
+                                📤 Messages envoyés
+                                <span class="badge" id="sentCount">0</span>
+                            </button>
+                            <button onclick="showMessagingTab('compose')" class="messaging-nav-btn" data-tab="compose">
+                                ✏️ Nouveau message
+                            </button>
+                        </div>
+
+                        <div class="messaging-main">
+                            <!-- Boîte de réception -->
+                            <div id="inbox" class="messaging-tab active">
+                                <div class="messaging-header">
+                                    <h3>📥 Boîte de réception</h3>
+                                    <button onclick="refreshInbox()" class="refresh-btn">🔄 Actualiser</button>
+                                </div>
+                                <div id="inboxList" class="message-list">
+                                    <div class="empty-state">
+                                        <p>🔭 Aucun message reçu</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Messages envoyés -->
+                            <div id="sent" class="messaging-tab">
+                                <div class="messaging-header">
+                                    <h3>📤 Messages envoyés</h3>
+                                </div>
+                                <div id="sentList" class="message-list">
+                                    <div class="empty-state">
+                                        <p>🔭 Aucun message envoyé</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Composer un message -->
+                            <div id="compose" class="messaging-tab">
+                                <div class="messaging-header">
+                                    <h3>✏️ Nouveau message</h3>
+                                </div>
+                                <form id="composeMessageForm" class="compose-form">
+                                    <div class="form-group">
+                                        <label for="messageTo">Destinataire :</label>
+                                        <select id="messageTo" required>
+                                            <option value="">-- Sélectionner --</option>
+                                            <option value="Administrateur">👨‍💼 Administrateur</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="messageSubject">Objet :</label>
+                                        <input type="text" id="messageSubject" placeholder="Objet du message" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="messageContent">Message :</label>
+                                        <textarea id="messageContent" rows="8"
+                                            placeholder="Écrivez votre message ici..." required></textarea>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="submit" class="send-btn">📧 Envoyer</button>
+                                        <button type="reset" class="cancel-btn">❌ Annuler</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION SOUTENANCES -->
+                <div id="soutenances" class="section">
+                    <h2>Mes soutenances programmées</h2>
+
+                    <div class="info-card">
+                        <p class="info-text">📌 Consultez ici les dates et informations de vos soutenances programmées
+                            par l'administration.</p>
+                    </div>
+
+                    <div class="soutenance-table-container">
+                        <table class="soutenance-table">
+                            <thead>
+                                <tr>
+                                    <th>📅 Date</th>
+                                    <th>🕐 Heure</th>
+                                    <th>🏛️ Salle</th>
+                                    <th>👥 Jury</th>
+                                    <th>📊 Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="soutenancesTableBody">
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        <p>🔭 Aucune soutenance programmée pour le moment</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* JavaScript intégré pour le tableau de bord étudiant */
+
+        // Variables globales
+        let uploadedFiles = [];
+        let messagesInbox = [];
+        let messagesSent = [];
+        let currentStudent = {
+            name: "Étudiant",
+            email: "etudiant@example.com"
+        };
+
+        // Données de la demande de stage
+        let stageRequest = {
+            entreprise: null,
+            entrepriseName: null,
+            motivation: null,
+            dateDebut: null,
+            dateFin: null,
+            objectifs: null,
+            submitted: false
+        };
+
+        // Données du rapport
+        let reportData = {
+            theme: null,
+            description: null,
+            themeSubmitted: false,
+            themeApproved: false,
+            fileSubmitted: false
+        };
+
+
+        /**
+         * Convertit les dates ISO string en objets Date dans un objet message
+         */
+        function parseMessageDates(msg) {
+            if (msg && msg.date && typeof msg.date === 'string') {
+                msg.date = new Date(msg.date);
+            }
+            return msg;
+        }
+
+        /**
+         * Formate une date de manière sûre (gère les strings et les objets Date)
+         */
+        function formatMessageDate(date) {
+            try {
+                const d = date instanceof Date ? date : new Date(date);
+                
+                // Vérifier que la date est valide
+                if (isNaN(d.getTime())) {
+                    return 'Date invalide';
+                }
+                
+                const dateStr = d.toLocaleDateString('fr-FR');
+                const timeStr = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                
+                return `${dateStr} à ${timeStr}`;
+            } catch (error) {
+                console.error('Erreur de formatage de date:', error);
+                return 'Date non disponible';
+            }
+        }
+
+        /**
+         * Valide et normalise un message
+         */
+        function validateMessage(msg) {
+            if (!msg || typeof msg !== 'object') {
+                console.error('Message invalide:', msg);
+                return null;
+            }
+            
+            return {
+                id: msg.id || Date.now(),
+                from: msg.from || 'Expéditeur inconnu',
+                to: msg.to || 'Destinataire inconnu',
+                subject: msg.subject || 'Pas de sujet',
+                content: msg.content || '',
+                date: msg.date instanceof Date ? msg.date : new Date(msg.date || Date.now()),
+                read: msg.read === true
+            };
+        }
+
+        /* Initialisation */
+        document.addEventListener('DOMContentLoaded', () => {
+            // Charger l'utilisateur connecté
+            const userData = localStorage.getItem('currentUser');
+            if (userData) {
+                const user = JSON.parse(userData);
+                currentStudent.name = user.name;
+            }
+
+            // Afficher la première section
+            const allSections = document.querySelectorAll('.section');
+            allSections.forEach(s => s.style.display = 'none');
+            const defaultSection = document.getElementById('demanderStage');
+            if (defaultSection) defaultSection.style.display = 'block';
+
+            initializeForms();
+            initializeFileUpload();
+            loadMessages();
+            showMessagingTab('inbox');
+        });
+
+        /* Navigation entre sections */
+        function showSection(id) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(sec => sec.style.display = 'none');
+
+            document.querySelectorAll('.menu ul li button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+
+            const target = document.getElementById(id);
+            if (target) {
+                target.style.display = 'block';
+            }
+        }
+
+        /* Initialisation des formulaires */
+        function initializeForms() {
+            // Formulaire entreprise (Étape 1)
+            const entrepriseForm = document.getElementById('entrepriseForm');
+            if (entrepriseForm) {
+                entrepriseForm.addEventListener('submit', handleEntrepriseSubmit);
+            }
+
+            // Formulaire calendrier (Étape 2)
+            const calendrierForm = document.getElementById('calendrierForm');
+            if (calendrierForm) {
+                calendrierForm.addEventListener('submit', handleCalendrierSubmit);
+            }
+
+            // Mise à jour de la durée en temps réel
+            const dateDebut = document.getElementById('dateDebut');
+            const dateFin = document.getElementById('dateFin');
+            if (dateDebut && dateFin) {
+                dateDebut.addEventListener('change', updateDuration);
+                dateFin.addEventListener('change', updateDuration);
+            }
+
+            // Formulaire thème
+            const themeForm = document.getElementById('themeForm');
+            if (themeForm) {
+                themeForm.addEventListener('submit', handleThemeSubmit);
+            }
+
+            // Formulaire message
+            const composeForm = document.getElementById('composeMessageForm');
+            if (composeForm) {
+                composeForm.addEventListener('submit', handleSendMessage);
+            }
+        }
+
+        /* GESTION DE LA DEMANDE DE STAGE */
+
+        // Étape 1: Choix de l'entreprise
+        function handleEntrepriseSubmit(e) {
+            e.preventDefault();
+
+            const select = document.getElementById('entreprise');
+            const entreprise = select.value;
+            const entrepriseName = select.options[select.selectedIndex].text;
+            const motivation = document.getElementById('motivationEntreprise').value.trim();
+
+            if (!entreprise) {
+                alert('⚠️ Veuillez sélectionner une entreprise');
+                return;
+            }
+
+            // Enregistrer les données
+            stageRequest.entreprise = entreprise;
+            stageRequest.entrepriseName = entrepriseName;
+            stageRequest.motivation = motivation;
+
+            // Afficher l'entreprise sélectionnée
+            document.getElementById('nomEntreprise').textContent = entrepriseName;
+            document.getElementById('entrepriseChoisie').textContent = entrepriseName;
+
+            // Passer à l'étape 2
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+
+            alert(`✅ Entreprise sélectionnée !\n\n🏢 ${entrepriseName}\n\nVeuillez maintenant définir la période du stage.`);
+        }
+
+        // Retour à l'étape 1
+        function retourStep1() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+        }
+
+        // Mise à jour de la durée
+        function updateDuration() {
+            const debut = document.getElementById('dateDebut').value;
+            const fin = document.getElementById('dateFin').value;
+
+            if (debut && fin) {
+                const d1 = new Date(debut);
+                const d2 = new Date(fin);
+                const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+
+                if (diff > 0) {
+                    document.getElementById('affichageDebut').textContent = d1.toLocaleDateString('fr-FR');
+                    document.getElementById('affichageFin').textContent = d2.toLocaleDateString('fr-FR');
+                    document.getElementById('dureeStage').textContent = `${diff} jours`;
+                }
+            }
+        }
+
+        // Étape 2: Soumission complète
+        function handleCalendrierSubmit(e) {
+            e.preventDefault();
+
+            const debut = document.getElementById('dateDebut').value;
+            const fin = document.getElementById('dateFin').value;
+            const objectifs = document.getElementById('objectifsStage').value.trim();
+
+            if (!debut || !fin) {
+                alert('⚠️ Veuillez remplir les deux dates');
+                return;
+            }
+
+            const d1 = new Date(debut);
+            const d2 = new Date(fin);
+            const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+
+            if (diff <= 0) {
+                alert('⚠️ La date de fin doit être après la date de début');
+                return;
+            }
+
+            // Enregistrer les données
+            stageRequest.dateDebut = debut;
+            stageRequest.dateFin = fin;
+            stageRequest.objectifs = objectifs;
+            stageRequest.submitted = true;
+
+            // Formater les dates
+            const debutFormatted = d1.toLocaleDateString('fr-FR');
+            const finFormatted = d2.toLocaleDateString('fr-FR');
+
+            // Mettre à jour le statut
+            document.getElementById('statutDemande').textContent = '⏳ En attente d\'approbation';
+            document.getElementById('statutDemande').className = 'status-badge status-pending';
+
+            const now = new Date();
+            document.getElementById('dateDemande').textContent = `Demande envoyée le ${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+
+            // Envoyer à l'administrateur
+            sendToAdmin(
+                'Demande de stage',
+                `Bonjour,\n\nJe vous soumets ma demande de stage avec les informations suivantes :\n\n🏢 Entreprise : ${stageRequest.entrepriseName}\n📅 Date de début : ${debutFormatted}\n📅 Date de fin : ${finFormatted}\n⏱️ Durée totale : ${diff} jours\n${stageRequest.motivation ? `\n💭 Motivation :\n${stageRequest.motivation}\n` : ''}${objectifs ? `\n🎯 Objectifs :\n${objectifs}\n` : ''}\nMerci de bien vouloir examiner ma demande.\n\nCordialement,\n${currentStudent.name}`
+            );
+
+            alert(`✅ Demande de stage envoyée avec succès !\n\n🏢 Entreprise : ${stageRequest.entrepriseName}\n📅 Début : ${debutFormatted}\n📅 Fin : ${finFormatted}\n⏱️ Durée : ${diff} jours\n\nVotre demande a été transmise à l'administrateur. Vous recevrez une réponse dans votre messagerie.`);
+        }
+
+        /* GESTION DU RAPPORT */
+
+        // Soumission du thème
+        function handleThemeSubmit(e) {
+            e.preventDefault();
+
+            const theme = document.getElementById('themeText').value.trim();
+            const description = document.getElementById('descriptionRapport').value.trim();
+
+            if (!theme || !description) {
+                alert('⚠️ Veuillez remplir le thème et la description');
+                return;
+            }
+
+            reportData.theme = theme;
+            reportData.description = description;
+            reportData.themeSubmitted = true;
+
+            // Afficher le thème
+            document.getElementById('affichageTheme').textContent = theme;
+            document.getElementById('affichageTheme').classList.remove('text-muted');
+
+            const now = new Date();
+            document.getElementById('statutTheme').textContent = `Soumis le ${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - En attente d'approbation`;
+
+            // Envoyer à l'administrateur
+            sendToAdmin(
+                'Soumission du thème de rapport',
+                `Bonjour,\n\nJe vous soumets mon thème de rapport de stage :\n\n📚 Thème :\n${theme}\n\n📝 Description :\n${description}\n\nMerci de bien vouloir examiner et approuver mon thème.\n\nCordialement,\n${currentStudent.name}`
+            );
+
+            alert(`✅ Thème soumis avec succès !\n\n📚 Thème : ${theme}\n\nVotre thème a été transmis à l'administrateur. Une fois approuvé, vous pourrez joindre votre document de rapport.`);
+
+            // Pour simulation, approuver automatiquement après 3 secondes
+            setTimeout(() => simulateThemeApproval(), 3000);
+        }
+
+        // Simulation de l'approbation du thème
+        function simulateThemeApproval() {
+            if (!reportData.themeSubmitted) return;
+
+            reportData.themeApproved = true;
+
+            // Ajouter un message dans la boîte de réception
+            const approvalMessage = {
+                id: Date.now(),
+                from: 'Administrateur',
+                subject: 'Approbation de votre thème de rapport',
+                content: `Bonjour ${currentStudent.name},\n\nVotre thème de rapport a été approuvé :\n\n"${reportData.theme}"\n\nVous pouvez maintenant joindre votre document de rapport dans la section Rapport.\n\nCordialement,\nL'Administration`,
+                date: new Date(),
+                read: false
+            };
+
+            messagesInbox.unshift(approvalMessage);
+            updateInboxMessages();
+            updateMessageCounts();
+
+            // Passer à l'étape 2
+            document.getElementById('themeStep1').style.display = 'none';
+            document.getElementById('themeStep2').style.display = 'block';
+            document.getElementById('themeApprouve').textContent = reportData.theme;
+
+            alert('✅ Thème approuvé par l\'administrateur !\n\nVous pouvez maintenant joindre votre document de rapport.');
+        }
+
+        /* GESTION DE L'UPLOAD DE FICHIERS */
+        function initializeFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+
+            if (fileInput && fileList) {
+                fileInput.addEventListener('change', function (e) {
+                    const files = Array.from(e.target.files);
+
+                    files.forEach(file => {
+                        if (!uploadedFiles.find(f => f.name === file.name)) {
+                            uploadedFiles.push(file);
+
+                            const fileItem = document.createElement('div');
+                            fileItem.className = 'file-item';
+                            fileItem.innerHTML = `
+                                <span>📄 ${file.name} (${formatFileSize(file.size)})</span>
+                                <button type="button" onclick="removeFile('${file.name}')">❌ Retirer</button>
+                            `;
+
+                            fileList.appendChild(fileItem);
+                        }
+                    });
+
+                    fileInput.value = '';
+
+                    // Activer le bouton de soumission
+                    const submitBtn = document.getElementById('submitFinalReportBtn');
+                    if (submitBtn && uploadedFiles.length > 0) {
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+
+            const fileList = document.getElementById('fileList');
+            const items = fileList.querySelectorAll('.file-item');
+            items.forEach(item => {
+                if (item.textContent.includes(fileName)) {
+                    item.remove();
+                }
+            });
+
+            // Désactiver le bouton si plus de fichiers
+            const submitBtn = document.getElementById('submitFinalReportBtn');
+            if (submitBtn && uploadedFiles.length === 0) {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Soumission finale du rapport
+        function submitFinalReport() {
+            if (uploadedFiles.length === 0) {
+                alert('⚠️ Veuillez d\'abord ajouter votre fichier de rapport');
+                return;
+            }
+
+            const fileNames = uploadedFiles.map(f => f.name).join('\n• ');
+
+            // Envoyer à l'administrateur
+            sendToAdmin(
+                'Rapport de stage complet',
+                `Bonjour,\n\nJe vous transmets mon rapport de stage complet.\n\n📚 Thème :\n${reportData.theme}\n\n📝 Description :\n${reportData.description}\n\n📎 Fichiers joints :\n• ${fileNames}\n\nMerci de bien vouloir examiner mon rapport.\n\nCordialement,\n${currentStudent.name}`
+            );
+
+            reportData.fileSubmitted = true;
+
+            alert(`✅ Rapport de stage envoyé avec succès !\n\n📚 Thème : ${reportData.theme}\n📎 ${uploadedFiles.length} fichier(s) joint(s)\n\nVotre rapport complet a été transmis à l'administrateur. Vous recevrez une notification une fois le rapport validé.`);
+
+            // Réinitialiser
+            uploadedFiles = [];
+            document.getElementById('fileList').innerHTML = '';
+            document.getElementById('submitFinalReportBtn').disabled = true;
+        }
+
+        /* GESTION DE LA MESSAGERIE */
+        function showMessagingTab(tabId) {
+            document.querySelectorAll('.messaging-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.messaging-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.display = 'none';
+            });
+
+            const target = document.getElementById(tabId);
+            if (target) {
+                target.classList.add('active');
+                target.style.display = 'block';
+            }
+        }
+
+        function handleSendMessage(e) {
+            e.preventDefault();
+
+            const to = document.getElementById('messageTo').value;
+            const subject = document.getElementById('messageSubject').value.trim();
+            const content = document.getElementById('messageContent').value.trim();
+
+            if (!to || !subject || !content) {
+                alert('⚠️ Veuillez remplir tous les champs du message.');
+                return;
+            }
+
+            sendToAdmin(subject, content);
+
+            alert(`✅ Message envoyé avec succès !\n\n📧 Destinataire : ${to}\n📝 Objet : ${subject}\n\nVotre message a été transmis à l'administrateur.`);
+
+            e.target.reset();
+            showMessagingTab('sent');
+        }
+
+        function sendToAdmin(subject, content) {
+            const now = new Date();
+            
+            // Message pour la mémoire locale (avec objet Date)
+            const messageForMemory = {
+                id: Date.now(),
+                from: currentStudent.name,
+                to: 'Administrateur',
+                subject: subject,
+                content: content,
+                date: now,  // Objet Date pour l'affichage local
+                read: false
+            };
+
+            messagesSent.unshift(messageForMemory);
+            updateSentMessages();
+            updateMessageCounts();
+
+            // Message pour le stockage (avec ISO string)
+            const messageForStorage = {
+                ...messageForMemory,
+                date: now.toISOString()  // String pour localStorage
+            };
+
+            // Envoyer à l'administrateur via localStorage
+            const studentToAdminMessages = JSON.parse(localStorage.getItem('studentToAdminMessages') || '[]');
+            studentToAdminMessages.unshift(messageForStorage);
+            localStorage.setItem('studentToAdminMessages', JSON.stringify(studentToAdminMessages));
+            
+            console.log('✅ Message envoyé à l\'administrateur:', subject);
+        }
+
+        // Vérifier les messages de l'admin
+        function checkAdminMessages() {
+            try {
+                const adminMessages = localStorage.getItem('adminToStudentMessages');
+                if (!adminMessages) return;
+                
+                const messages = JSON.parse(adminMessages);
+
+                // Filtrer les messages pour cet étudiant et valider
+                const myMessages = messages
+                    .filter(msg => msg && msg.to === currentStudent.name)
+                    .map(msg => ({
+                        ...msg,
+                        date: new Date(msg.date)  // Convertir la date string en objet Date
+                    }))
+                    .map(validateMessage)
+                    .filter(msg => msg !== null);
+
+                // Ajouter les nouveaux messages
+                myMessages.forEach(msg => {
+                    const exists = messagesInbox.find(m => m.id === msg.id);
+                    if (!exists) {
+                        messagesInbox.unshift(msg);
+                    }
+                });
+
+                updateInboxMessages();
+                updateMessageCounts();
+            } catch (error) {
+                console.error('❌ Erreur lors du chargement des messages admin:', error);
+            }
+        }
+
+        // Vérifier périodiquement les nouveaux messages de l'admin
+        setInterval(checkAdminMessages, 3000); // Toutes les 3 secondes
+
+        function loadMessages() {
+            messagesInbox = [
+                {
+                    id: 1,
+                    from: 'Administrateur',
+                    subject: 'Bienvenue sur la plateforme',
+                    content: 'Bonjour,\n\nBienvenue sur la plateforme de gestion des stages. N\'hésitez pas à soumettre vos demandes via les formulaires appropriés.\n\nCordialement,\nL\'Administration',
+                    date: new Date(Date.now() - 86400000),
+                    read: false
+                }
+            ];
+
+            updateInboxMessages();
+            updateSentMessages();
+            updateMessageCounts();
+        }
+
+        function updateInboxMessages() {
+            const inboxList = document.getElementById('inboxList');
+            if (!inboxList) return;
+
+            if (messagesInbox.length === 0) {
+                inboxList.innerHTML = '<div class="empty-state"><p>🔭 Aucun message reçu</p></div>';
+                return;
+            }
+
+            inboxList.innerHTML = messagesInbox.map(msg => `
+                <div class="message-item ${!msg.read ? 'unread' : ''}" onclick="openMessage(${msg.id}, 'inbox')">
+                    <strong>📧 ${msg.from}</strong> – ${msg.subject}
+                    <br><small>📅 ${formatMessageDate(msg.date)}</small>
+                    <p>${msg.content.substring(0, 100)}${msg.content.length > 100 ? '...' : ''}</p>
+                </div>
+            `).join('');
+        }
+
+        function updateSentMessages() {
+            const sentList = document.getElementById('sentList');
+            if (!sentList) return;
+
+            if (messagesSent.length === 0) {
+                sentList.innerHTML = '<div class="empty-state"><p>🔭 Aucun message envoyé</p></div>';
+                return;
+            }
+
+            sentList.innerHTML = messagesSent.map(msg => `
+                <div class="message-item" onclick="openMessage(${msg.id}, 'sent')">
+                    <strong>📧 À : ${msg.to}</strong> – ${msg.subject}
+                    <br><small>📅 ${formatMessageDate(msg.date)}</small>
+                    <p>${msg.content.substring(0, 100)}${msg.content.length > 100 ? '...' : ''}</p>
+                </div>
+            `).join('');
+        }
+
+        function updateMessageCounts() {
+            const inboxCount = document.getElementById('inboxCount');
+            const sentCount = document.getElementById('sentCount');
+
+            if (inboxCount) {
+                const unreadCount = messagesInbox.filter(m => !m.read).length;
+                inboxCount.textContent = unreadCount;
+                inboxCount.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+            }
+
+            if (sentCount) {
+                sentCount.textContent = messagesSent.length;
+                sentCount.style.display = messagesSent.length > 0 ? 'inline-block' : 'none';
+            }
+        }
+
+        function openMessage(messageId, type) {
+            const messages = type === 'inbox' ? messagesInbox : messagesSent;
+            const message = messages.find(m => m.id === messageId);
+
+            if (!message) return;
+
+            if (type === 'inbox' && !message.read) {
+                message.read = true;
+                updateInboxMessages();
+                updateMessageCounts();
+            }
+
+            const from = type === 'inbox' ? message.from : `Vous → ${message.to}`;
+
+            alert(`📧 Message complet\n\n👤 ${from}\n📝 ${message.subject}\n📅 ${formatMessageDate(message.date)}\n\n${message.content}`);
+        }
+
+        function refreshInbox() {
+            alert('🔄 Actualisation de la boîte de réception...\n\nRecherche de nouveaux messages...');
+            updateInboxMessages();
+            setTimeout(() => {
+                alert('✅ Boîte de réception actualisée!');
+            }, 500);
+        }
+
+        /* DÉCONNEXION */
+        function logout() {
+            if (confirm('🚪 Voulez-vous vous déconnexer ?')) {
+                alert('✅ Déconnexion réussie!\n\nÀ bientôt!');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+
+</html>
