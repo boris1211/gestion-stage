@@ -46,7 +46,7 @@ app.use('/api/soutenances', soutenancesRoutes);
 // ROUTE RACINE
 // ===================================================
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.Html'));
 });
 
 // ===================================================
