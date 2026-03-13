@@ -1167,11 +1167,14 @@ table tbody td {
    ============================================================ */
 
 .accueil-section {
-    display: flex !important;
     align-items: center;
     justify-content: center;
     min-height: 80vh;
     background: #ffffff;
+}
+
+.accueil-section.active {
+    display: flex !important;
 }
 
 .accueil-container {
