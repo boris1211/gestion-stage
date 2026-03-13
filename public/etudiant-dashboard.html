@@ -60,7 +60,7 @@
             <!-- MENU LATERAL -->
             <div class="menu">
                 <ul>
-                    <li><button onclick="showSection('demanderStage')" class="active">📋 Demander un Stage</button></li>
+                    <li><button onclick="showSection('demanderStage')">📋 Demander un Stage</button></li>
                     <li><button onclick="showSection('theme')">📚 Rapport</button></li>
                     <li><button onclick="showSection('messaging')">✉️ Messagerie</button></li>
                     <li><button onclick="showSection('soutenances')">🎤 Soutenances</button></li>
@@ -70,8 +70,18 @@
 
             <!-- CONTENU -->
             <div class="content">
+
+                <!-- SECTION ACCUEIL (affichée par défaut) -->
+                <div id="accueil" class="section active accueil-section">
+                    <div class="accueil-container">
+                        <img src="logo UUA.jpg" alt="Logo Université" class="accueil-logo">
+                        <h2 class="accueil-titre">Bienvenue sur votre Tableau de bord</h2>
+                        <p class="accueil-sous-titre">Sélectionnez un onglet dans le menu pour commencer</p>
+                    </div>
+                </div>
+
                 <!-- SECTION DEMANDER UN STAGE -->
-                <div id="demanderStage" class="section active">
+                <div id="demanderStage" class="section">
                     <h2>Demander un Stage</h2>
 
                     <!-- Étape 1: Choix de l'entreprise -->

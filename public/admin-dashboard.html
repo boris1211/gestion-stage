@@ -6,6 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏠 Tableau de bord Administrateur - IAM</title>
     <link rel="stylesheet" href="dashboard.css">
+    <style>
+        /* PAGE D'ACCUEIL — LOGO CENTRÉ */
+        .accueil-section {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+            background: #ffffff;
+        }
+        .accueil-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 40px;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(46, 125, 50, 0.10);
+            max-width: 480px;
+            width: 100%;
+            animation: fadeInUp 0.6s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .accueil-logo {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 4px 16px rgba(46,125,50,0.15));
+            border-radius: 50%;
+        }
+        .accueil-titre {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 12px;
+        }
+        .accueil-sous-titre {
+            font-size: 1rem;
+            color: #757575;
+            line-height: 1.6;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -24,7 +71,7 @@
             <!-- MENU LATERAL -->
             <div class="menu">
                 <ul>
-                    <li><button onclick="showSection('createUser')" class="active">👨‍💼 Créer Utilisateur</button></li>
+                    <li><button onclick="showSection('createUser')">👨‍💼 Créer Utilisateur</button></li>
                     <li><button onclick="showSection('enterprises')">🏢 Entreprises</button></li>
                     <li><button onclick="showSection('statistics')">📊 Statistiques</button></li>
                     <li><button onclick="showSection('report')">📚 Rapport</button></li>
@@ -38,8 +85,18 @@
 
             <!-- CONTENU -->
             <div class="content">
+
+                <!-- SECTION ACCUEIL (affichée par défaut) -->
+                <div id="accueil" class="section active accueil-section">
+                    <div class="accueil-container">
+                        <img src="logo UUA.jpg" alt="Logo Université" class="accueil-logo">
+                        <h2 class="accueil-titre">Bienvenue sur votre Tableau de bord</h2>
+                        <p class="accueil-sous-titre">Sélectionnez un onglet dans le menu pour commencer</p>
+                    </div>
+                </div>
+
                 <!-- SECTION : CRÉER UTILISATEUR -->
-                <div id="createUser" class="section active">
+                <div id="createUser" class="section">
                     <h2>Créer Utilisateur</h2>
                     <form id="createUserForm">
                         <label for="userRole">Profil :</label>
