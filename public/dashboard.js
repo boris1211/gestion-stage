@@ -300,6 +300,12 @@ function initEventListeners() {
  * @param {string} sectionId - ID de la section à afficher
  */
 function showSection(sectionId) {
+    // Masquer la page d'accueil explicitement (display:flex !important nécessite style direct)
+    const accueil = document.getElementById('accueil');
+    if (accueil) {
+        accueil.style.display = 'none';
+    }
+
     // Masquer toutes les sections
     const sections = document.querySelectorAll('.section');
     sections.forEach(section => {
