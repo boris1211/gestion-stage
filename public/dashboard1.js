@@ -89,7 +89,7 @@ function checkAuth() {
     const user = localStorage.getItem('currentUser');
     if (!user) {
         alert('⚠️ Vous devez être connecté pour accéder à cette page.');
-        window.location.href = 'index.html';
+        window.location.href = '/';
         return;
     }
 
@@ -98,7 +98,7 @@ function checkAuth() {
     // Vérifier que c'est bien un étudiant
     if (currentStudent.role !== 'student') {
         alert('⚠️ Accès interdit. Vous n\'êtes pas étudiant.');
-        window.location.href = 'index.html';
+        window.location.href = '/';
         return;
     }
 
@@ -111,7 +111,7 @@ function checkAuth() {
 function logout() {
     if (confirm('🚪 Voulez-vous vous déconnecter ?')) {
         alert('✅ Déconnexion réussie!\n\nÀ bientôt!');
-        window.location.href = 'index.html';
+        window.location.href = '/';
     }
 }
 
@@ -245,11 +245,9 @@ function initEventListeners() {
  * @param {string} sectionId - ID de la section à afficher
  */
 function showSection(sectionId) {
-    // Masquer la page d'accueil explicitement (display:flex !important nécessite style direct)
+    // Masquer la page d'accueil explicitement
     const accueil = document.getElementById('accueil');
-    if (accueil) {
-        accueil.style.display = 'none';
-    }
+    if (accueil) accueil.style.display = 'none';
 
     // Masquer toutes les sections
     const sections = document.querySelectorAll('.section');
