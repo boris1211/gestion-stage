@@ -64,8 +64,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialiser les écouteurs d'événements
     initEventListeners();
 
-    // Afficher la section par défaut
-    showSection('demanderStage');
+    // Aucune section active au démarrage — on affiche l'accueil avec le logo
+    // (la section #accueil est déjà active dans le HTML)
 
     // Charger les messages
     loadMessages();

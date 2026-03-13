@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initEventListeners();
 
     // Afficher la section par défaut
-    showSection('createUser');
+    // Aucune section active au démarrage — accueil affiché par défaut
 
     // Vérifier périodiquement les nouveaux messages des étudiants
     setInterval(checkStudentMessages, 3000);
